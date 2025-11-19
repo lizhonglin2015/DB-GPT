@@ -132,7 +132,10 @@ class TongYiEmbeddings(BaseModel, Embeddings):
 
         for i in range(0, len(texts), max_batch_chunks_size):
             batch_texts = texts[i : i + max_batch_chunks_size]
+            # 打印调用参数
+            logger.info(f"embedding call params: {self.api_url}, {self.model_name}, {self._api_key}" + "batch_texts: " + str(batch_texts))
             resp = TextEmbedding.call(
+                api_url=self.api_url,
                 model=self.model_name, input=batch_texts, api_key=self._api_key
             )
             logger.info(f"embedding resp: {resp}")
