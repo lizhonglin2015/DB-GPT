@@ -1,5 +1,6 @@
 """Tongyi embeddings for RAG."""
 
+import logging
 from dataclasses import dataclass, field
 from typing import List, Optional, Type
 
@@ -9,6 +10,7 @@ from dbgpt.core.interface.parameter import EmbeddingDeployModelParameters
 from dbgpt.model.adapter.base import register_embedding_adapter
 from dbgpt.util.i18n_utils import _
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class TongyiEmbeddingDeployModelParameters(EmbeddingDeployModelParameters):
@@ -18,6 +20,9 @@ class TongyiEmbeddingDeployModelParameters(EmbeddingDeployModelParameters):
 
     api_key: Optional[str] = field(
         default=None, metadata={"help": _("The API key for the embeddings API.")}
+    )
+    api_url: Optional[str] = field(
+        default=None, metadata={"help": _("The API url for the embeddings API.")}
     )
     backend: Optional[str] = field(
         default="text-embedding-v1",
@@ -64,6 +69,9 @@ class TongYiEmbeddings(BaseModel, Embeddings):
     api_key: Optional[str] = Field(
         default=None, description="The API key for the embeddings API."
     )
+    api_url: Optional[str] = Field(
+        default=None, description="The API url for the embeddings API."
+    )
     model_name: str = Field(
         default="text-embedding-v1", description="The name of the model to use."
     )
@@ -93,6 +101,7 @@ class TongYiEmbeddings(BaseModel, Embeddings):
         """Create an embedding model from parameters."""
         return cls(
             api_key=parameters.api_key,
+            api_url=parameters.api_url,
             model_name=parameters.real_provider_model_name,
         )
 
@@ -126,12 +135,13 @@ class TongYiEmbeddings(BaseModel, Embeddings):
             resp = TextEmbedding.call(
                 model=self.model_name, input=batch_texts, api_key=self._api_key
             )
-            if "output" not in resp:
+            logger.info(f"embedding resp: {resp}")
+            if "data" not in resp:
                 raise RuntimeError(resp["message"])
 
             # 提取并排序嵌入
-            batch_embeddings = resp["output"]["embeddings"]
-            sorted_embeddings = sorted(batch_embeddings, key=lambda e: e["text_index"])
+            batch_embeddings = resp["data"]["embedding"]
+            sorted_embeddings = sorted(batch_embeddings, key=lambda e: e["index"])
             embeddings.extend([result["embedding"] for result in sorted_embeddings])
 
         return embeddings
