@@ -121,6 +121,8 @@ class TongYiEmbeddings(BaseModel, Embeddings):
             Embedded texts as List[List[float]], where each inner List[float]
                 corresponds to a single input text.
         """
+        
+        import dashscope
         from dashscope import TextEmbedding
 
         dashscope.api_key = self._api_key
