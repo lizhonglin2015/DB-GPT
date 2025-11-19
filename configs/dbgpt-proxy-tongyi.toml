@@ -11,11 +11,11 @@ port = 5670
 
 [service.web.database]
 type = "mysql"
-host = "doris-qa.c5g4cgmsmujl.ap-northeast-1.rds.amazonaws.com"
-port = "3306"
-database = "dbgpt"
-user = "admin"
-password ="8T!3sK#9F$2m"
+host = "xxxxxx"
+port = "xxxxxx"
+database = "xxxxxx"
+user = "xxxxxx"
+password ="xxxxxx"
 
 [rag.storage]
 [rag.storage.vector]
@@ -28,11 +28,11 @@ persist_path = "pilot/data"
 name = "qwen-plus"
 provider = "${env:LLM_MODEL_PROVIDER:-proxy/tongyi}"
 api_base = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
-api_key = "sk-3159e8ae1549433e8815cd3eafd3a4f8"
+api_key = "xxxxxx"
 
 
 [[models.embeddings]]
 name = "text-embedding-v4"
 provider = "${env:EMBEDDING_MODEL_PROVIDER:-proxy/tongyi}"
 api_url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/embeddings"
-api_key = "sk-3159e8ae1549433e8815cd3eafd3a4f8"
+api_key = "xxxxxx"
