@@ -10,8 +10,12 @@ host = "0.0.0.0"
 port = 5670
 
 [service.web.database]
-type = "sqlite"
-path = "pilot/meta_data/dbgpt.db"
+type = "mysql"
+host = "doris-qa.c5g4cgmsmujl.ap-northeast-1.rds.amazonaws.com"
+port = "3306"
+database = "dbgpt"
+user = "admin"
+password ="8T!3sK#9F$2m"
 
 [rag.storage]
 [rag.storage.vector]
@@ -23,11 +27,12 @@ persist_path = "pilot/data"
 [[models.llms]]
 name = "qwen-plus"
 provider = "${env:LLM_MODEL_PROVIDER:-proxy/tongyi}"
-api_base = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-api_key = "${env:DASHSCOPE_API_KEY}"
+api_base = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+api_key = "sk-3159e8ae1549433e8815cd3eafd3a4f8"
+
 
 [[models.embeddings]]
-name = "text-embedding-v3"
+name = "text-embedding-v4"
 provider = "${env:EMBEDDING_MODEL_PROVIDER:-proxy/tongyi}"
-api_url = "https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings"
-api_key = "${env:DASHSCOPE_API_KEY}"
+api_url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/embeddings"
+api_key = "sk-3159e8ae1549433e8815cd3eafd3a4f8"
