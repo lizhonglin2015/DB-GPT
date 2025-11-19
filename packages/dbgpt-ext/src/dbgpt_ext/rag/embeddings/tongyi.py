@@ -25,7 +25,7 @@ class TongyiEmbeddingDeployModelParameters(EmbeddingDeployModelParameters):
         default=None, metadata={"help": _("The API url for the embeddings API.")}
     )
     backend: Optional[str] = field(
-        default="text-embedding-v1",
+        default="text-embedding-v4",
         metadata={
             "help": _(
                 "The real model name to pass to the provider, default is None. If "
@@ -73,7 +73,7 @@ class TongYiEmbeddings(BaseModel, Embeddings):
         default=None, description="The API url for the embeddings API."
     )
     model_name: str = Field(
-        default="text-embedding-v1", description="The name of the model to use."
+        default="text-embedding-v4", description="The name of the model to use."
     )
 
     def __init__(self, **kwargs):
@@ -123,6 +123,9 @@ class TongYiEmbeddings(BaseModel, Embeddings):
         """
         from dashscope import TextEmbedding
 
+        dashscope.api_key = self._api_key
+        dashscope.base_http_api_url = 'https://dashscope-intl.aliyuncs.com/api/v1'
+       
         embeddings = []
         # batch size too longer may cause embedding error,eg: qwen online embedding
         # models must not be larger than 25
@@ -135,16 +138,15 @@ class TongYiEmbeddings(BaseModel, Embeddings):
             # 打印调用参数
             logger.info(f"embedding call params: {self.api_url}, {self.model_name}, {self._api_key}" + "batch_texts: " + str(batch_texts))
             resp = TextEmbedding.call(
-                api_url=self.api_url,
-                model=self.model_name, input=batch_texts, api_key=self._api_key
+                model=self.model_name, input=batch_texts
             )
             logger.info(f"embedding resp: {resp}")
-            if "data" not in resp:
+            if "output" not in resp:
                 raise RuntimeError(resp["message"])
 
             # 提取并排序嵌入
-            batch_embeddings = resp["data"]["embedding"]
-            sorted_embeddings = sorted(batch_embeddings, key=lambda e: e["index"])
+            batch_embeddings = resp["output"]["embeddings"]
+            sorted_embeddings = sorted(batch_embeddings, key=lambda e: e["text_index"])
             embeddings.extend([result["embedding"] for result in sorted_embeddings])
 
         return embeddings
